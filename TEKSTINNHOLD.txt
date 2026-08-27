@@ -1,0 +1,441 @@
+════════════════════════════════════════════════════════════════════
+ GRIM — ALT TEKSTINNHOLD PÅ NETTSIDEN (oppdatert versjon)
+════════════════════════════════════════════════════════════════════
+Dette er alt av redigerbar tekst på nettsiden, side for side, i samme
+rekkefølge som den vises. Skriv din egen tekst rett under hver linje
+merket ► — behold merkelappene (i klammer / kolon) som de er, det er
+bare selve teksten etter dem som skal byttes ut. Send filen tilbake
+(eller si ifra hva som er endret), så legger jeg det inn i koden.
+
+Alt innhold under er lagt inn i koden 27.08.2026, basert på teksten du
+sendte tilbake. To små ting jeg rettet automatisk mens jeg la det inn:
+"sammarbeidet" → "samarbeidet" (AJ Produkter) og "hvor jeg mindre
+oppdrag" → "hvor jeg tar mindre oppdrag" (Om meg, avsnitt 2) — si ifra
+hvis noen av delene skal være annerledes.
+
+Merk: "em-streker" (—) brukes fortsatt ikke i noen synlig tekst,
+etter ønske.
+
+
+────────────────────────────────────────────────────────────────────
+ NAVIGASJON (vises øverst på alle sider)
+────────────────────────────────────────────────────────────────────
+[Menypunkt 1] ► Video
+[Menypunkt 2] ► Foto
+[Menypunkt 3] ► Prosjekt
+[Menypunkt 4] ► Podcast
+[Menypunkt 5] ► Kontakt
+
+
+────────────────────────────────────────────────────────────────────
+ FORSIDEN (index.html)
+────────────────────────────────────────────────────────────────────
+
+[Fane-tittel i nettleseren]
+► GRIM · Film & Foto
+[USIKKER: i teksten du sendte sto det bare "GRIM ·" uten noe etter —
+ jeg har derfor latt denne stå urørt i koden. Si ifra hva du vil den
+ skal være, så oppdaterer jeg den.]
+
+--- Hero (stort, over showreelen) ---
+[Overskrift linje 1]      ► Kreative filmer
+[Overskrift linje 2, uthevet] ► for alle formater.
+[Undertekst]               ► Video · Foto · Design · AI · Sosiale medier
+
+--- Utvalgt-seksjon (spilles av direkte på siden når du klikker) ---
+[Seksjonsoverskrift] ► Utvalgte prosjekter
+
+  Kort 1:
+  [Kategori]    ► Bryllup
+  [Tittel]      ► Charlotte & Jacob
+  [Beskrivelse] ► Filmoppdrag for Charlotte & Jacob sin bryllupsdag.
+
+  Kort 2:
+  [Kategori]    ► Næringsliv
+  [Tittel]      ► Kongsberg Digital × Norske Shell
+  [Beskrivelse] ► Kongsberg Digital er en viktig leverandør for Shell. Vi
+                  laget film for å vise hvordan Shell bruker tjenestene
+                  fra Kongsberg Digital i arbeidshverdagen.
+
+  Kort 3:
+  [Kategori]    ► Reklame
+  [Tittel]      ► Den Stolte Hane × Dennis Hauger
+  [Beskrivelse] ► Den Stolte Hane var inne som sponsor for Dennis Hauger
+                  når han kjørte Formel 2. Vi lagde derfor reklamefilm
+                  sammen med Dennis for å promotere nye kyllingvinger som
+                  skulle i butikk.
+
+--- Kundelogo-seksjon ---
+[Overskrift over logoene] ► Utvalgte kunder
+
+--- Om meg-seksjon ---
+[Overskrift]   ► Om meg
+[Brødtekst 1]  ► Mitt navn er Bjørnar Grimstad. Jeg er 31 år gammel og
+                 holder til i Brattvåg like utenfor Ålesund. Til daglig
+                 jobber jeg som markedsføringssjef i ett selskap som
+                 heter ELDI.
+[Brødtekst 2]  ► Jeg driver også et enkeltmannsforetak hvor jeg tar
+                 mindre oppdrag innen film og foto. Jeg har en bachelor
+                 innenfor film og tv, og har jobbet med dette hele
+                 livet. Jeg har tidligere jobbet i et reklamebyrå som
+                 heter Shoots, og fikk mye erfaring i løpet av tiden min
+                 der. Jeg har også tidligere jobbet med Oskar Westerlin
+                 hvor jeg også har fått mye erfaring innenfor sosiale
+                 medier, podcast, youtube og alt som følger med det.
+
+
+────────────────────────────────────────────────────────────────────
+ VIDEO-SIDEN (video.html)
+────────────────────────────────────────────────────────────────────
+
+[Fane-tittel i nettleseren] ► Video · GRIM
+
+--- Intro øverst ---
+[Overskrift]  ► Video
+[Brødtekst]   ► Arbeid innen film, innhold og kommersiell produksjon.
+
+--- Kategorifaner ---
+► Bryllup / Event / Næringsliv / Reklame / YouTube
+[NB: "Utvalgt"-fanen er fjernet herfra, den finnes nå kun på forsiden.
+     Podcast flyttet til egen side 27.08.2026, se PODCAST-SIDEN under.]
+
+--- Bryllup ---
+  Charlotte & Jacob
+  [Beskrivelse] ► Filmoppdrag for Charlotte & Jacob sin bryllupsdag.
+
+  Halvor & Hannah
+  [Beskrivelse] ► Filmoppdrag for Hannah & Halvor sin bryllupsdag.
+
+  June & Rasmus
+  [Beskrivelse] ► Filmoppdrag for June & Rasmus sin bryllupsdag.
+
+--- Event ---
+  Phoenix  [tidligere "Lets Move" — tittel endret 27.08.2026]
+  [Beskrivelse] ► Filmoppdrag for dansegruppen Lets Move som hadde
+                  forestillingen Phoenix i desember 2025.
+
+  Identity  [tidligere "Lets Move II" — tittel endret 27.08.2026]
+  [Beskrivelse] ► Filmoppdrag for dansegruppen Lets Move som hadde
+                  forestillingen Identity i juni 2026.
+
+--- Næringsliv ---
+  AJ Produkter
+  [Beskrivelse] ► Filmoppdrag for AJ Produkter som ville lage en
+                  kundecase film hvor vi besøkte en kunde som fortalte
+                  om sin opplevelse av samarbeidet med AJ Produkter når
+                  de skulle innrede nye kontorer.
+
+  Kongsberg Digital × Uni-Tankers  [tidligere "Kongsberg Digital"]
+  [Beskrivelse] ► Kongsberg Digital ønsket å fortelle gjennom en
+                  kundecase video hvordan de hjelper selskapet
+                  Uni-Tankers.
+
+  Kongsberg Digital × Norske Shell  [tidligere "Kongsberg Digital II"]
+  [Beskrivelse] ► Kongsberg Digital leverer digitale løsninger til
+                  Norske Shell. Vi intervjuet ansatte i bedriften for å
+                  fortelle hvordan Kongsberg Digital har hjulpet dem.
+
+  Røde Kors × Mentorfamilie  [tidligere "Røde Kors"]
+  [Beskrivelse] ► En informasjonsfilm for å vise hvordan Røde Kors
+                  jobber med unge som har opplevd større påkjenninger i
+                  løpet av livet.
+
+  Røde Kors × Digital Leksehjelp  [tidligere "Røde Kors: Digital Leksehjelp"]
+  [Beskrivelse] ► En morsom reklamefilm for å vise hvordan Røde Kors
+                  tilbyr leksehjelp for ungdommer som har behov for
+                  dette.
+
+  Strawberry  [tidligere "Strawberry Hotels"]
+  [Beskrivelse] ► Reklamefilm med fokus på bærekraft og mangfold for
+                  Strawberry Hotels.
+
+--- Reklame ---
+  New Wave Group  [tidligere "Craft" — tittel endret 27.08.2026, se
+                   avklaringen om Craft/New Wave Group nederst i denne
+                   filens tidligere versjon]
+  [Beskrivelse] ► Små kampanjer til sosiale medier som skulle vise
+                  treningsklær for Craft.
+
+  Defigo
+  [Beskrivelse] ► Informasjonsfilm om hvor enkelt Defigo sine løsninger
+                  fungerer.
+
+  Den Stolte Hane
+  [Beskrivelse] ► Kylling fra familiegårder på Jæren, filmet med like
+                  mye stolthet som navnet tilsier. [uendret — ikke
+                  nevnt i teksten du sendte, så jeg lot denne stå]
+
+  Den Stolte Hane × Dennis Hauger
+  [Beskrivelse] ► Den Stolte Hane var inne som sponsor for Dennis Hauger
+                  når han kjørte Formel 2. Vi lagde derfor reklamefilm
+                  sammen med Dennis for å promotere nye kyllingvinger som
+                  skulle i butikk.
+
+  Jordan
+  [Beskrivelse] ► Reklamefilm til bruk i sosiale medier for Jordan.
+
+  Kari Traa
+  [Beskrivelse] ► Reklamefilm for Kari Traa sin nye kolleksjon av
+                  ullklær for barn.
+
+  Norgesplaster
+  [Beskrivelse] ► Reklamefilm for Norgesplaster til bruk i sosiale
+                  medier.
+
+  New Wave Group  [tidligere "Påskekampanje" — tittel endret 27.08.2026]
+  [Beskrivelse] ► Reklamefilm i forbindelse med påskekampanje rettet mot
+                  bedrifter som kan kjøpe inn gaver til ansatte.
+
+  Skogstad
+  [Beskrivelse] ► Reklamefilm for bruk i sosiale medier av Skogstad sin
+                  nye kolleksjon.
+
+--- YouTube ---
+  Helt Kake
+  [Beskrivelse] ► Var med på å starte egen Youtube kanal i forbindelse
+                  med jobb, hvor målet var å treffe yngre personer på
+                  Youtube.
+
+  Hjernefrys
+  [Beskrivelse] ► Vi startet en snapchat serie som het Hjernefrys hvor
+                  Oliver Bergset inviterte gjester til et isbad samtidig
+                  som de skulle intervjues.
+
+  Hot Seat
+  [Beskrivelse] ► Talkshow i samarbeid med Den Stolte Hane. Rasmus Wold
+                  intervjuet ulike gjester samtidig som de skulle spise
+                  sterke kyllingvinger.
+
+  F2 Snack King Studio  [tidligere "Snack King" — tittel endret 27.08.2026]
+  [Beskrivelse] ► En youtubeserie fylt med talkshow, challenges og andre
+                  morsomme innslag for Den Stolte Hane.
+
+  Snack Roulette
+  [Beskrivelse] ► En matserie på youtube for Den Stolte Hane. Vi ga 3
+                  unge voksne utfordringer i studio rundt de ulike
+                  produktene til Den Stolte Hane.
+
+
+────────────────────────────────────────────────────────────────────
+ FOTO-SIDEN (foto.html)
+────────────────────────────────────────────────────────────────────
+
+[Fane-tittel i nettleseren] ► Foto · GRIM
+
+--- Intro øverst ---
+[Overskrift]  ► Foto
+[Brødtekst]   ► Et utvalg bilder fra prosjekter jeg har jobbet med.
+
+--- Kategorifaner ---
+► Bryllup / Event
+
+--- Prosjekter ---
+  A sky full of stars – A Coldplay tribute  [tidligere "Brattvåg Janitsjar"]
+  [Beskrivelse] ► Ein storslått hyllest til Coldplay sitt songunivers,
+                  med stort orkester, band og vokal, arrangert av
+                  Brattvåg Janitsjar.
+
+  Phoenix × Let's Move  [tidligere "Lets Move" — tittel endret 27.08.2026]
+  [Beskrivelse] ► Danseforestillingen Phoenix av Let's Move desember
+                  2025.
+
+  Identity × Let's Move  [tidligere "Lets Move II" — tittel endret 27.08.2026]
+  [Beskrivelse] ► Danseforestillingen Identity av Let's Move juni 2026.
+
+  Charlotte & Jacob
+  [Beskrivelse] ► Fotografering i bryllupet til Charlotte & Jacob.
+
+
+────────────────────────────────────────────────────────────────────
+ PROSJEKT-SIDEN (prosjekt.html)
+────────────────────────────────────────────────────────────────────
+
+[Fane-tittel i nettleseren] ► Prosjekt · GRIM
+
+--- Intro øverst ---
+[Overskrift]  ► Prosjekter
+[Brødtekst]   ► Noen av de større prosjektene jeg har gjort.
+
+--- Kategorifaner ---
+► Oskar Westerlin / Kontoret / Skjessen / TikTok
+
+--- Profilseksjon pr. kategori (stor tekst + statistikk øverst i hver fane) ---
+
+  Oskar Westerlin
+  [Tekst]  ► Produksjon av youtube videoer som gikk på hovedkanalen til
+             Oskar Westerlin.
+  [Statistikk-etiketter] ► Visninger / Følgere / Videoer
+
+  Kontoret
+  [Tekst]  ► Jeg var med på oppstarten av podcasten og hadde produsent +
+             klipp ansvar for 35+ episoder.
+  [Statistikk-etiketter] ► Visninger / Følgere / Videoer
+
+  Skjessen
+  [Tekst]  ► I hovedsak en snapchat serie hvor Oskar ratet restauranter
+             rundt om i Oslo. Hadde ansvar for video + klipp 1-3 sesong
+             av Skjessen, og var med på oppstarten av hele serien.
+  [Statistikk-etiketter] ► Visninger / Følgere YouTube / Følgere Snapchat / Videoer
+  [NB: Følgere Snapchat (147K) lagt til 27.08.2026 på forespørsel, tallene
+       for YouTube er ellers ikke endret.]
+
+  AI Football (vises under TikTok-fanen)
+  [Tekst]  ► Et TikTok-konsept der AI gjenskaper fotballstjerner i
+             Lego-estetikk. «Guess the player» engasjerte millioner av
+             fotballfans globalt, helt uten betalt distribusjon.
+  [Statistikk-etiketter] ► Visninger / Følgere / Likes / Videoer
+
+--- Prosjekter/klipp ---
+  TikTok:
+    AI Football: 13M visninger
+    AI Football: 11M visninger
+    AI Football: 9.3M visninger
+    [Beskrivelse, samme på alle tre] ► Del av AI Football-serien som til
+      sammen har passert 30 millioner visninger på TikTok.
+
+  Kontoret:
+    100 shots, 100 minutter med Erik Follestad
+    [Beskrivelse] ► Erik Follestad gjester «Kontoret».
+
+    Morten Ramm mobber Snorre: TikTok, lønn og humor i Norge
+    [Beskrivelse] ► Morten Ramm gjester «Kontoret».
+
+    Petter Stordalen om TikTok, privatfly og milliardærtips
+    [Beskrivelse] ► Petter Stordalen gjester «Kontoret».
+
+  Oskar Westerlin:
+    Får 1 krone per kalori!
+    [Beskrivelse] ► En kalori-challenge med Oskar Westerlin.
+
+    Opptrer på Norges største konsert
+    [Beskrivelse] ► Oskar Westerlin backstage på Norges største konsert.
+
+    Kaster skjorta foran 15 000 mennesker
+    [Beskrivelse] ► Oskar Westerlin kaster skjorta foran 15 000 mennesker.
+
+  Skjessen:
+    Gigantisk kebab hos Döner Bros
+    [Beskrivelse] ► Skjessen rater Döner Bros.
+
+    Den beste kebaben i Norge? Barish Jessheim
+    [Beskrivelse] ► Skjessen rater Barish Jessheim.
+
+    David er med å rater: Mike's Corner
+    [Beskrivelse] ► Skjessen rater Mike's Corner.
+
+--- Tjeneste-merker (vises i spilleren, samme sett brukes flere steder) ---
+► Idé / Manus / Klipp / Regi / Foto
+
+
+────────────────────────────────────────────────────────────────────
+ PODCAST-SIDEN (podcast.html) — egen side, flyttet ut av Video 27.08.2026
+────────────────────────────────────────────────────────────────────
+
+[Fane-tittel i nettleseren] ► Podcast · GRIM
+
+--- Intro øverst ---
+[Overskrift]  ► Podcast
+[Brødtekst]   ► Noen podcast prosjekter jeg har produsert.
+
+--- Podcaster (alle vises på rad, ingen kategorifaner) ---
+  Ikke snakk om det
+  [Beskrivelse] ► «Ikke snakk om det» går i dybden på temaer det kan
+                  være vanskelig å snakke om. I samtalen med
+                  programlederne Jonas Sevaldrud og Emma Ingebrigtsen
+                  blir du bedre kjent med gjestens historie, følelser og
+                  tanker på et dypere nivå. Vi håper podkasten bidrar
+                  til refleksjon, inspirasjon og mer åpenhet.
+  [Lenke] ► Spotify
+
+  Fantasypodden
+  [Beskrivelse] ► FantasyPodden er en Podcast om Fantasy Premier
+                  League. Hver uke oppsummerer vi runden som var, tar
+                  opp ulike FPL-dilemmaer og deler våre Fantasytips til
+                  runden som kommer.
+  [Lenke] ► Podme (podme.com/no/podkast/fantasypodden-plnorge)
+
+  Kontoret med Oskar og Snorre
+  [Beskrivelse] ► Hver mandag inviterer Oskar og Snorre en gjest til
+                  Kontoret.
+  [Lenke] ► Spotify
+
+  #pengepodden × Nordnet  [tidligere "#pengepodden (Nordnet)"]
+  [Beskrivelse] ► Jeg var innleid som produsent for en episode av
+                  pengepodden hos Nordnet.
+  [Lenke] ► YouTube (youtube.com/watch?v=WAree-wD-qs)
+
+  Av med hjelmen
+  [Beskrivelse] ► «Av med hjelmen» tar for seg unike historier og
+                  spennende diskusjonsemner innenfor motorsport med
+                  både kjente og ukjente gjester som har mer å bidra
+                  med enn du kanskje skulle tro.
+  [Lenke] ► YouTube (youtube.com/@Avmedhjelmen)
+
+
+────────────────────────────────────────────────────────────────────
+ KONTAKT-SIDEN (kontakt.html)
+────────────────────────────────────────────────────────────────────
+
+[Fane-tittel i nettleseren] ► Kontakt · GRIM
+
+Siden er sentrert i én blokk midt på siden i stedet for å strekke seg
+til kantene. Teksten kommer først, med et lite, stående portrettbilde
+til høyre for den (vanlig bilde, ikke fast/sticky). Ingen kundeliste.
+
+[Overskrift linje 1]        ► Lyst til å
+[Overskrift linje 2, uthevet] ► skape noe sammen?
+[E-post som vises/lenkes]   ► grimstad1995@hotmail.com
+[Telefon som vises/lenkes]  ► +47 94835348
+
+  Om meg:
+  [Overskrift]  ► Om meg
+  [Avsnitt 1]   ► Jeg har en bachelor i film og TV fra Westerdals, og
+                  startet karrieren i reklame og innholdsbyrået Shoots i
+                  Oslo. Deretter tilbrakte jeg tre år sammen med Oskar
+                  Westerlin, der jeg fikk være med på å bygge opp både
+                  Skjessen, Snapchat-serien der Oskar tester og rater
+                  restauranter rundt om i Oslo, og podcasten Kontoret. I
+                  samme periode har jeg hatt egne prosjekter på TikTok som
+                  til sammen har passert 180 millioner visninger.
+  [Avsnitt 2]   ► Til daglig jobber jeg som markedsføringssjef i ELDI, der
+                  jeg får bruke mye av erfaringen jeg har bygget meg opp
+                  gjennom årene. GRIM driver jeg ved siden av som eget
+                  enkeltmannsforetak, og tar oppdrag på kveldstid og i
+                  helgene når det passer.
+--- Skjema ---
+[Spørsmål over kategori-knappene] ► Hva gjelder forespørselen?
+[Kategori-knapper] ► Event / Reklame / Sosiale medier / YouTube / Bryllup /
+                      Drone / AI / Design
+[Feltnavn: Navn]      ► Navn        [Plassholdertekst: Ola Nordmann]
+[Feltnavn: Bedrift]   ► Bedrift (valgfritt)  [Plassholdertekst: Firmanavn AS]
+[Feltnavn: E-post]    ► E-post      [Plassholdertekst: ola@eksempel.no]
+[Feltnavn: Melding]   ► Melding     [Plassholdertekst: Fortell litt om prosjektet ditt...]
+[Sendeknapp]          ► Ta kontakt
+[Bekreftelsesmelding etter innsending] ► Takk! Jeg tar kontakt snart.
+
+--- Footer (bunntekst, kun på Kontakt-siden) ---
+[Logo-tekst] ► GRIM
+[Copyright]  ► © 2026 Bjørnar Grimstad
+
+
+════════════════════════════════════════════════════════════════════
+ TING JEG ER USIKKER PÅ, VIL DU BEKREFTE?
+════════════════════════════════════════════════════════════════════
+1. Browser-fanetittelen på forsiden ("GRIM · ...") — se merknad under
+   FORSIDEN over.
+2. To Reklame-prosjekter heter nå begge "New Wave Group" (tidligere
+   "Craft" og "Påskekampanje"). Det stemmer sikkert, siden New Wave
+   Group eier Craft-merket — men si ifra hvis du heller vil skille dem,
+   f.eks. "New Wave Group × Craft" og "New Wave Group × Påske".
+3. "F2 Snack King Studio" — bekreft at dette er riktig tittel (litt
+   uvanlig med "F2" foran), i tilfelle det var en skrivefeil.
+
+
+════════════════════════════════════════════════════════════════════
+ TIPS FOR REDIGERING
+════════════════════════════════════════════════════════════════════
+• Titler (som "Charlotte & Jacob") er navnet på selve prosjektet/filmen
+  og bør helst ikke endres uten at du også endrer filnavn/mapper i koden,
+  spør meg gjerne først hvis du vil gjøre store navneendringer.
+• Beskrivelsene er de tekstene som er tryggest og enklest å bytte ut,
+  det er bare ren tekst, ingen kobling til filer.

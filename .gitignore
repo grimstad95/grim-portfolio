@@ -1,0 +1,7 @@
+# Tunge medie-mapper — hostes på webhotell, ikke i Git/GitHub
+# (enkeltfiler her er opptil 1,3 GB; GitHub tillater maks 100 MB/fil)
+Videoer/
+Foto/
+
+# Systemfiler
+.DS_Store

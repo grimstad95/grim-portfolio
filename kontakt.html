@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontakt · GRIM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-kontakt">
+
+    <div class="kontakt-split">
+        <!-- Alt innhold i én flytende kolonne -->
+        <div class="kontakt-content-panel">
+            <h1 class="kontakt-headline">Lyst til å<br><em>skape noe sammen?</em></h1>
+
+            <div class="kontakt-links">
+                <a href="mailto:grimstad1995@hotmail.com" class="kontakt-link">grimstad1995@hotmail.com</a>
+                <a href="tel:+4794835348" class="kontakt-link">+47 94835348</a>
+            </div>
+
+            <div class="kontakt-about">
+                <h3>Om meg</h3>
+                <p>Jeg har en bachelor i film og TV fra Westerdals, og startet karrieren i reklame og
+                   innholdsbyrået Shoots i Oslo. Deretter tilbrakte jeg tre år sammen med Oskar Westerlin,
+                   der jeg fikk være med på å bygge opp både Skjessen, Snapchat-serien der Oskar tester og
+                   rater restauranter rundt om i Oslo, og podcasten Kontoret. I samme periode har jeg hatt
+                   egne prosjekter på TikTok som til sammen har passert 180 millioner visninger.</p>
+                <p>Til daglig jobber jeg som markedsføringssjef i ELDI, der jeg får bruke mye av erfaringen
+                   jeg har bygget meg opp gjennom årene. GRIM driver jeg ved siden av som eget
+                   enkeltmannsforetak, og tar oppdrag på kveldstid og i helgene når det passer.</p>
+            </div>
+
+            <form class="kontakt-form" id="kontakt-form" novalidate>
+
+                <!-- Category chips -->
+                <div class="form-group">
+                    <label class="form-label">Hva gjelder forespørselen?</label>
+                    <div class="category-chips" id="category-chips">
+                        <button type="button" class="chip" data-value="Video: Event">Event</button>
+                        <button type="button" class="chip" data-value="Video: Reklame">Reklame</button>
+                        <button type="button" class="chip" data-value="Video: Sosiale medier">Sosiale medier</button>
+                        <button type="button" class="chip" data-value="Video: YouTube">YouTube</button>
+                        <button type="button" class="chip" data-value="Foto: Bryllup">Bryllup</button>
+                        <button type="button" class="chip" data-value="Drone">Drone</button>
+                        <button type="button" class="chip" data-value="Video: AI">AI</button>
+                        <button type="button" class="chip" data-value="Design">Design</button>
+                    </div>
+                    <!-- Hidden input carries selected value -->
+                    <input type="hidden" name="category" id="category-input">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="navn">Navn</label>
+                        <input class="form-input" type="text" id="navn" name="navn" placeholder="Ola Nordmann" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="bedrift">Bedrift (valgfritt)</label>
+                        <input class="form-input" type="text" id="bedrift" name="bedrift" placeholder="Firmanavn AS">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="epost">E-post</label>
+                    <input class="form-input" type="email" id="epost" name="epost" placeholder="ola@eksempel.no" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="melding">Melding</label>
+                    <textarea class="form-input form-textarea" id="melding" name="melding" rows="5" placeholder="Fortell litt om prosjektet ditt..." required></textarea>
+                </div>
+
+                <!-- Honeypot mot spam-roboter — usynlig for ekte besøkende -->
+                <input type="checkbox" name="botcheck" id="botcheck" style="display:none" tabindex="-1" autocomplete="off">
+
+                <button type="submit" class="form-submit" id="form-submit-btn">Ta kontakt</button>
+
+                <p class="form-success" id="form-success">Takk! Jeg tar kontakt snart.</p>
+                <p class="form-error" id="form-error">Noe gikk galt, prøv gjerne igjen — eller send meg en e-post direkte på <a href="mailto:grimstad1995@hotmail.com">grimstad1995@hotmail.com</a>.</p>
+            </form>
+        </div>
+
+        <!-- Lite portrett til høyre for teksten -->
+        <div class="kontakt-photo-panel">
+            <img src="om/portrett.jpg" alt="Bjørnar Grimstad">
+        </div>
+    </div>
+
+    <footer>
+        <span class="footer-logo">GRIM</span>
+        <span class="footer-copy">© 2026 Bjørnar Grimstad</span>
+    </footer>
+
+    <script src="nav.js"></script>
+    <script>
+    // --- Category chips ---
+    const chips        = document.getElementById('category-chips');
+    const categoryInput = document.getElementById('category-input');
+
+    chips.addEventListener('click', e => {
+        const chip = e.target.closest('.chip');
+        if (!chip) return;
+        const wasActive = chip.classList.contains('active');
+        // Deselect all, then toggle clicked
+        chips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        if (!wasActive) {
+            chip.classList.add('active');
+            categoryInput.value = chip.dataset.value;
+        } else {
+            categoryInput.value = '';
+        }
+    });
+
+    // --- Form submit — sendes via Web3Forms, kommer rett i innboksen din ---
+    const WEB3FORMS_ACCESS_KEY = '50d35207-d116-4581-9b5c-f78ce5b685e6';
+
+    const form       = document.getElementById('kontakt-form');
+    const submitBtn  = document.getElementById('form-submit-btn');
+    const successMsg = document.getElementById('form-success');
+    const errorMsg   = document.getElementById('form-error');
+
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+
+        const navn     = form.navn.value.trim();
+        const epost    = form.epost.value.trim();
+        const bedrift  = form.bedrift.value.trim();
+        const melding  = form.melding.value.trim();
+        const kategori = categoryInput.value || 'Generell forespørsel';
+
+        if (!navn || !epost || !melding) return;
+        if (form.botcheck.checked) return; // spam-robot fylte ut honeypot-feltet
+
+        successMsg.style.display = 'none';
+        errorMsg.style.display   = 'none';
+        submitBtn.disabled  = true;
+        submitBtn.textContent = 'Sender...';
+
+        const payload = {
+            access_key: WEB3FORMS_ACCESS_KEY,
+            subject:    `Forespørsel: ${kategori}`,
+            from_name:  navn,
+            name:       navn,
+            email:      epost,
+            replyto:    epost,
+            bedrift:    bedrift || '(ikke oppgitt)',
+            kategori:   kategori,
+            message:    `Fra: ${navn}${bedrift ? ` (${bedrift})` : ''}\nE-post: ${epost}\nKategori: ${kategori}\n\n${melding}`,
+        };
+
+        try {
+            const res  = await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                successMsg.style.display = 'block';
+                form.reset();
+                chips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                categoryInput.value = '';
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        } catch (err) {
+            errorMsg.style.display = 'block';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Ta kontakt';
+        }
+    });
+    </script>
+</body>
+</html>

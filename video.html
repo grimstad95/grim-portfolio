@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video · GRIM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Denne siden ruller normalt (som vjus.no) i stedet for det faste
+           viewport-panelet gallery-layout bruker på Foto — overstyres her. */
+        body.page-gallery { height: auto; overflow: visible; }
+        .gallery-layout { height: auto; margin-top: 0; }
+        .gallery-main { overflow-y: visible; }
+        .gallery-tabs {
+            position: sticky;
+            top: var(--nav-height);
+            background: var(--bg);
+            z-index: 5;
+        }
+
+        /* ─── Intro tekst øverst ─── */
+        .video-intro {
+            margin-top: var(--nav-height);
+            padding: 72px 52px 48px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: end;
+        }
+        .video-intro-title {
+            font-family: var(--display);
+            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            line-height: 1.02;
+            color: var(--ink);
+        }
+        .video-intro-text {
+            font-size: 15px;
+            line-height: 1.85;
+            color: var(--ink-dim);
+            max-width: 46ch;
+        }
+        @media (max-width: 860px) {
+            .video-intro { grid-template-columns: 1fr; gap: 20px; padding: 48px 24px 32px; }
+        }
+
+        /* ─── Stort videogitter — 3 pr. rad, tett og fylt ─── */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+        }
+        @media (max-width: 1100px) {
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 640px) {
+            .gallery-grid { grid-template-columns: 1fr; }
+        }
+        .gallery-main { padding: 2px 2px 90px; }
+
+        /* ─── Kort — samme stil som "Utvalgt" på forsiden: statisk
+           thumbnail, ingen vending. Kategori/tittel/beskrivelse
+           toner inn som en gradient-overlay ved hover. ─── */
+        .card-thumb {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background: var(--bg-elevated);
+            overflow: hidden;
+        }
+        .card-thumb img,
+        .card-thumb video {
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
+            transition: transform 0.5s ease;
+            background: var(--bg-elevated);
+        }
+        .card:hover .card-thumb img,
+        .card:hover .card-thumb video { transform: scale(1.04); }
+
+        .card-hover-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: clamp(18px, 2.6vw, 30px);
+            background: linear-gradient(to top, rgba(0,0,0,0.86) 0%, rgba(0,0,0,0.35) 55%, transparent 85%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .card:hover .card-hover-overlay { opacity: 1; }
+
+        .card-back-category {
+            font-family: var(--mono);
+            font-size: 10.5px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent-2);
+            margin-bottom: 10px;
+        }
+        .card-back-title {
+            font-family: var(--display);
+            font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+            line-height: 1.05;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .card-back-desc {
+            font-size: 12.5px;
+            line-height: 1.65;
+            color: var(--ink-dim);
+            max-width: 42ch;
+        }
+
+        /* ─── Modal / spiller — minimalistisk, "nær-fremtid" preg:
+           mørk glassflate, tynn teal glødering rundt spilleren,
+           egne (ikke native) kontroller som toner ut når man ikke
+           rører musepekeren. Kun tilbake, tittel, av/på, tidslinje,
+           lyd. Ingen faner, ingen service-merker. */
+        .modal { padding: 32px; }
+        .modal-inner {
+            max-width: 1400px;
+            height: 88vh;
+            background: #000;
+            border: none;
+            border-radius: 22px;
+            overflow: hidden;
+            padding: 0;
+            box-shadow:
+                0 0 0 1px rgba(45, 212, 196, 0.16),
+                0 50px 120px -24px rgba(0,0,0,0.9),
+                0 0 90px -18px rgba(45, 212, 196, 0.18);
+        }
+        .modal-body { display: block; height: 100%; }
+
+        .player { position: absolute; inset: 0; }
+        .modal-local-video {
+            width: 100%; height: 100%;
+            object-fit: contain;
+            display: block;
+            background: #000;
+            cursor: pointer;
+        }
+
+        /* Tilbake + tittel — alltid synlig, svevende, ingen boks */
+        .player-back {
+            position: absolute;
+            top: 22px; left: 24px;
+            z-index: 25;
+            display: flex; align-items: center; gap: 8px;
+            background: none; border: none; padding: 0; margin: 0;
+            color: rgba(255,255,255,0.5);
+            font-family: var(--sans);
+            font-size: 12.5px;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .player-back svg { width: 15px; height: 15px; flex-shrink: 0; }
+        .player-back:hover { color: var(--accent-2); }
+
+        .player-title {
+            position: absolute;
+            top: 24px; right: 26px;
+            z-index: 25;
+            max-width: 42%;
+            font-family: var(--mono);
+            font-size: 10.5px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.38);
+            text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Sentrert av/på-ikon — vises kun i pause, glass-look */
+        .player-center-btn {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.85);
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: rgba(10, 20, 18, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.18);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 22;
+        }
+        .player.is-paused .player-center-btn {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+        .player-center-btn:hover { border-color: rgba(45,212,196,0.6); }
+        .player-center-btn svg { width: 22px; height: 22px; margin-left: 2px; }
+
+        /* Bunnrad — tidslinje + av/på + tid + lyd. Toner ut i ro. */
+        .player-controls-wrap {
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            z-index: 24;
+            padding: 34px 24px 20px;
+            background: linear-gradient(to top, rgba(4,10,9,0.55) 0%, transparent 100%);
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+            pointer-events: none;
+        }
+        .player.show-controls .player-controls-wrap,
+        .player.is-paused .player-controls-wrap {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .player-scrubber {
+            position: relative;
+            height: 3px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.16);
+            cursor: pointer;
+            margin-bottom: 16px;
+        }
+        .player-scrubber-fill {
+            position: absolute; top: 0; left: 0; height: 100%;
+            width: 0%;
+            background: var(--accent-2);
+            border-radius: 3px;
+        }
+        .player-scrubber-handle {
+            position: absolute; top: 50%; left: 0%;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: var(--accent-2);
+            box-shadow: 0 0 10px rgba(45,212,196,0.8);
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.15s ease;
+        }
+        .player-scrubber:hover .player-scrubber-handle { transform: translate(-50%, -50%) scale(1); }
+
+        .player-controls-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .player-btn {
+            background: none; border: none; padding: 0; margin: 0;
+            width: 26px; height: 26px;
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.85);
+            cursor: pointer;
+            transition: color 0.2s;
+            flex-shrink: 0;
+        }
+        .player-btn:hover { color: var(--accent-2); }
+        .player-btn svg { width: 17px; height: 17px; }
+
+        .player-time {
+            font-family: var(--mono);
+            font-size: 10.5px;
+            letter-spacing: 0.02em;
+            color: rgba(255,255,255,0.55);
+        }
+        .player-time-sep { color: rgba(255,255,255,0.3); font-family: var(--mono); font-size: 10.5px; }
+        .player-spacer { flex: 1; }
+
+        @media (max-width: 640px) {
+            .modal { padding: 0; }
+            .modal-inner { height: 100vh; max-width: none; border-radius: 0; box-shadow: none; }
+            .player-title { display: none; }
+        }
+
+    </style>
+</head>
+<body class="page-gallery">
+
+    <!-- Intro -->
+    <div class="video-intro">
+        <h1 class="video-intro-title">Video</h1>
+        <p class="video-intro-text">Arbeid innen film, innhold og kommersiell produksjon.</p>
+    </div>
+
+    <div class="gallery-layout">
+        <nav class="gallery-tabs">
+            <button class="gallery-tab active" data-filter="bryllup">Bryllup</button>
+            <button class="gallery-tab" data-filter="event">Event</button>
+            <button class="gallery-tab" data-filter="næringsliv">Næringsliv</button>
+            <button class="gallery-tab" data-filter="reklame">Reklame</button>
+            <button class="gallery-tab" data-filter="youtube">YouTube</button>
+        </nav>
+
+        <main class="gallery-main">
+            <div class="gallery-grid" id="grid"></div>
+        </main>
+    </div>
+
+    <!-- Modal — én film av gangen, ingen videre navigasjon herfra -->
+    <div class="modal" id="modal" role="dialog" aria-modal="true">
+        <div class="modal-inner" id="modal-inner">
+            <div class="modal-body" id="modal-body">
+                <div class="player" id="player">
+                    <video id="player-video" class="modal-local-video" playsinline preload="metadata"></video>
+
+                    <button class="player-back" id="modal-close" aria-label="Tilbake">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+                        Tilbake
+                    </button>
+                    <span class="player-title" id="modal-title"></span>
+
+                    <button class="player-center-btn" id="player-center-btn" aria-label="Spill av">
+                        <svg id="player-center-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+
+                    <div class="player-controls-wrap">
+                        <div class="player-scrubber" id="player-scrubber">
+                            <div class="player-scrubber-fill" id="player-scrubber-fill"></div>
+                            <div class="player-scrubber-handle" id="player-scrubber-handle"></div>
+                        </div>
+                        <div class="player-controls-row">
+                            <button class="player-btn" id="player-play" aria-label="Spill av / pause">
+                                <svg id="player-play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            </button>
+                            <span class="player-time" id="player-time-elapsed">0:00</span>
+                            <span class="player-time-sep">/</span>
+                            <span class="player-time" id="player-time-duration">0:00</span>
+                            <span class="player-spacer"></span>
+                            <button class="player-btn" id="player-mute" aria-label="Demp / slå på lyd">
+                                <svg id="player-mute-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a9 9 0 0 1 0 12"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="nav.js"></script>
+    <script>
+    const BASE  = 'Videoer/';
+    const TBASE = 'Videoer/Thumbnails_Nettside/';
+
+    // services: hvilke av Idé / Manus / Klipp / Regi / Foto som er utført
+    // orientation: 'landscape' (16:9) or 'portrait' (9:16)
+    const projects = [
+        // ─── Bryllup
+        { title: 'Charlotte & Jacob', category: 'bryllup', orientation: 'landscape', file: 'Bryllup/Charlotte&Jacob.mp4', thumb: 'Charlotte_Jacob.jpg',
+          desc: 'Filmoppdrag for Charlotte & Jacob sin bryllupsdag.', featured: true, services: ['regi', 'klipp', 'foto'] },
+        { title: 'Halvor & Hannah', category: 'bryllup', orientation: 'portrait', file: 'Bryllup/Halvor_Hannah.mp4', thumb: 'Halvor_Hannah.jpg',
+          desc: 'Filmoppdrag for Hannah & Halvor sin bryllupsdag.', services: ['regi', 'klipp', 'foto'] },
+        { title: 'June & Rasmus', category: 'bryllup', orientation: 'landscape', file: 'Bryllup/June&Rasmus.mp4', thumb: 'June_Rasmus.jpg',
+          desc: 'Filmoppdrag for June & Rasmus sin bryllupsdag.', services: ['regi', 'klipp', 'foto'] },
+
+        // ─── Event
+        { title: 'Phoenix', category: 'event', orientation: 'landscape', file: 'Event/Lets_Move_Promo_Hovedfilm_FINAL_uten.tekst.mp4', thumb: 'Lets_Move.jpg',
+          desc: 'Filmoppdrag for dansegruppen Lets Move som hadde forestillingen Phoenix i desember 2025.', services: ['regi', 'klipp'] },
+        { title: 'Identity', category: 'event', orientation: 'landscape', file: 'Event/Lets_Move_Promo_02.mp4', thumb: 'Lets_Move_Promo_02.jpg',
+          desc: 'Filmoppdrag for dansegruppen Lets Move som hadde forestillingen Identity i juni 2026.', featured: true, services: ['regi', 'klipp'] },
+
+        // ─── Næringsliv
+        { title: 'AJ Produkter', category: 'næringsliv', orientation: 'landscape', file: 'Næringsliv/AJ_Produkter_16x9_hovedfilm_Næringsliv.mp4', thumb: 'Aj_Produkter.jpg',
+          desc: 'Filmoppdrag for AJ Produkter som ville lage en kundecase film hvor vi besøkte en kunde som fortalte om sin opplevelse av samarbeidet med AJ Produkter når de skulle innrede nye kontorer.', services: ['regi', 'klipp', 'foto'] },
+        { title: 'Kongsberg Digital × Uni-Tankers', category: 'næringsliv', orientation: 'landscape', file: 'Næringsliv/Kongsberg_02.mp4', thumb: 'Kongsberg_01.jpg',
+          desc: 'Kongsberg Digital ønsket å fortelle gjennom en kundecase video hvordan de hjelper selskapet Uni-Tankers.', services: ['regi', 'klipp', 'foto'] },
+        { title: 'Kongsberg Digital × Norske Shell', category: 'næringsliv', orientation: 'landscape', file: 'Næringsliv/Kongsberg_01.mp4', thumb: 'Kongsberg_02.jpg',
+          desc: 'Kongsberg Digital leverer digitale løsninger til Norske Shell. Vi intervjuet ansatte i bedriften for å fortelle hvordan Kongsberg Digital har hjulpet dem.', featured: true, services: ['regi', 'klipp'] },
+        { title: 'Røde Kors × Mentorfamilie', category: 'næringsliv', orientation: 'landscape', file: 'Næringsliv/Røde Kors_Næringsliv.mp4', thumb: 'Røde_Kors-01.jpg',
+          desc: 'En informasjonsfilm for å vise hvordan Røde Kors jobber med unge som har opplevd større påkjenninger i løpet av livet.', services: ['regi', 'klipp'] },
+        { title: 'Røde Kors × Digital Leksehjelp', category: 'næringsliv', orientation: 'landscape', file: 'Reklame/Digital Leksehjelp - gratis og anonymt - OsloRodeKors (1080p, h264).mp4', thumb: 'RødeKors_Leksehjelp.jpg',
+          desc: 'En morsom reklamefilm for å vise hvordan Røde Kors tilbyr leksehjelp for ungdommer som har behov for dette.', services: ['regi', 'klipp'] },
+        { title: 'Strawberry', category: 'næringsliv', orientation: 'landscape', file: 'Næringsliv/strawberry.mp4', thumb: 'Strawberry_01.jpg',
+          desc: 'Reklamefilm med fokus på bærekraft og mangfold for Strawberry Hotels.', services: ['regi', 'foto'] },
+
+        // ─── Reklame
+        { title: 'New Wave Group', category: 'reklame', orientation: 'landscape', file: 'Reklame/Craft_Reklame.mp4', thumb: 'Craft.jpg',
+          desc: 'Små kampanjer til sosiale medier som skulle vise treningsklær for Craft.', services: ['regi', 'klipp'] },
+        { title: 'Defigo', category: 'reklame', orientation: 'landscape', file: 'Reklame/Defigo.mp4', thumb: 'Defigo.jpg',
+          desc: 'Informasjonsfilm om hvor enkelt Defigo sine løsninger fungerer.', services: ['regi', 'klipp'] },
+        { title: 'Den Stolte Hane', category: 'reklame', orientation: 'landscape', file: 'Reklame/Den Stolte Hane_03_Reklame.mp4', thumb: 'We Be Cheffin.jpg',
+          desc: 'Kylling fra familiegårder på Jæren, filmet med like mye stolthet som navnet tilsier.', services: ['regi', 'klipp'] },
+        { title: 'Den Stolte Hane × Dennis Hauger', category: 'reklame', orientation: 'landscape', file: 'Reklame/Den Stolte Hane_Dennis Hauger_Reklame.mp4', thumb: 'Snack King Reklame.jpg',
+          desc: 'Den Stolte Hane var inne som sponsor for Dennis Hauger når han kjørte Formel 2. Vi lagde derfor reklamefilm sammen med Dennis for å promotere nye kyllingvinger som skulle i butikk.', featured: true, services: ['idé', 'regi', 'klipp'] },
+        { title: 'Jordan', category: 'reklame', orientation: 'landscape', file: 'Reklame/Jordan_Reklame.mp4', thumb: 'Jordan.jpg',
+          desc: 'Reklamefilm til bruk i sosiale medier for Jordan.', services: ['regi', 'foto'] },
+        { title: 'Kari Traa', category: 'reklame', orientation: 'portrait', file: 'Reklame/Kari_Traa.mp4', thumb: 'Kari Traa.jpg',
+          desc: 'Reklamefilm for Kari Traa sin nye kolleksjon av ullklær for barn.', services: ['foto'] },
+        { title: 'Norgesplaster', category: 'reklame', orientation: 'landscape', file: 'Reklame/Norgesplaster_Reklame.mp4', thumb: 'Norgesplaster.jpg',
+          desc: 'Reklamefilm for Norgesplaster til bruk i sosiale medier.', services: ['regi', 'klipp'] },
+        { title: 'New Wave Group', category: 'reklame', orientation: 'landscape', file: 'Reklame/Påskekampanje.mp4', thumb: 'Påskekampanje.jpg',
+          desc: 'Reklamefilm i forbindelse med påskekampanje rettet mot bedrifter som kan kjøpe inn gaver til ansatte.', services: ['regi', 'klipp'] },
+        { title: 'Skogstad', category: 'reklame', orientation: 'landscape', file: 'Reklame/Skogstad_Reklame.mp4', thumb: 'Skogstad.jpg',
+          desc: 'Reklamefilm for bruk i sosiale medier av Skogstad sin nye kolleksjon.', services: ['regi', 'foto'] },
+
+        // ─── YouTube
+        { title: 'Helt Kake', category: 'youtube', orientation: 'landscape', file: 'Youtube/Helt Kake_Youtube.mp4', thumb: 'Helt kake.jpg',
+          desc: 'Var med på å starte egen Youtube kanal i forbindelse med jobb, hvor målet var å treffe yngre personer på Youtube.', services: ['regi', 'klipp', 'manus'] },
+        { title: 'Hjernefrys', category: 'youtube', orientation: 'landscape', file: 'Youtube/Hjernefrys_Yotuube.mp4', thumb: 'Hjernefrys.jpg',
+          desc: 'Vi startet en snapchat serie som het Hjernefrys hvor Oliver Bergset inviterte gjester til et isbad samtidig som de skulle intervjues.', services: ['regi', 'klipp'] },
+        { title: 'Hot Seat', category: 'youtube', orientation: 'landscape', file: 'Youtube/Hot Seat_Youtube.mp4', thumb: 'Hot Seat.jpg',
+          desc: 'Talkshow i samarbeid med Den Stolte Hane. Rasmus Wold intervjuet ulike gjester samtidig som de skulle spise sterke kyllingvinger.', featured: true, services: ['regi', 'klipp'] },
+        { title: 'F2 Snack King Studio', category: 'youtube', orientation: 'landscape', file: 'Youtube/Snack King Studio.mp4', thumb: 'Snack King_Studio.jpg',
+          desc: 'En youtubeserie fylt med talkshow, challenges og andre morsomme innslag for Den Stolte Hane.', services: ['regi', 'klipp', 'manus'] },
+        { title: 'Snack Roulette', category: 'youtube', orientation: 'landscape', file: 'Youtube/Snack Roulette.mp4', thumb: 'Snack Roulette.jpg',
+          desc: 'En matserie på youtube for Den Stolte Hane. Vi ga 3 unge voksne utfordringer i studio rundt de ulike produktene til Den Stolte Hane.', services: ['regi', 'klipp', 'manus'] },
+    ];
+
+    const categoryLabels = {
+        bryllup: 'Bryllup', event: 'Event', næringsliv: 'Næringsliv',
+        reklame: 'Reklame', youtube: 'YouTube'
+    };
+
+    projects.forEach(p => { p.src = encodeURI(BASE + p.file); });
+
+    const grid           = document.getElementById('grid');
+    const sidebar        = document.querySelector('.gallery-tabs');
+    const modal          = document.getElementById('modal');
+    const modalTitle     = document.getElementById('modal-title');
+
+    // ─── Render prosjektkort — samme stil som "Utvalgt": statisk
+    // thumbnail, tekst toner inn ved hover, ingen vending. ──────
+    projects.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.category = p.category;
+        card.dataset.featured = p.featured ? 'true' : 'false';
+
+        const thumbUrl = p.thumb ? encodeURI(TBASE + p.thumb) : null;
+        const media = thumbUrl
+            ? `<img src="${thumbUrl}" alt="${p.title}">`
+            : `<video src="${p.src}" muted playsinline preload="metadata"></video>`;
+
+        card.innerHTML = `
+            <div class="card-thumb">
+                ${media}
+                <div class="card-hover-overlay">
+                    <span class="card-back-category">${categoryLabels[p.category]}</span>
+                    <h3 class="card-back-title">${p.title}</h3>
+                    <p class="card-back-desc">${p.desc}</p>
+                </div>
+            </div>
+        `;
+        card.addEventListener('click', () => openModal(p));
+        grid.appendChild(card);
+    });
+
+    // ─── Filter (kun for gitteret — påvirker ikke spilleren) ──
+    function applyFilter(filter) {
+        grid.querySelectorAll('.card').forEach(card => {
+            card.classList.toggle('hidden', card.dataset.category !== filter);
+        });
+        sidebar.querySelectorAll('.gallery-tab').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === filter);
+        });
+    }
+
+    sidebar.addEventListener('click', e => {
+        const btn = e.target.closest('.gallery-tab');
+        if (btn) applyFilter(btn.dataset.filter);
+    });
+
+    // ─── Spilleren — egne minimalistiske kontroller, ingen native ──
+    const PLAY_ICON  = '<path d="M8 5v14l11-7z"/>';
+    const PAUSE_ICON = '<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>';
+    const MUTE_ICON_ON  = '<path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a9 9 0 0 1 0 12"/>';
+    const MUTE_ICON_OFF = '<path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M16 9l5 6M21 9l-5 6"/>';
+
+    const player          = document.getElementById('player');
+    const videoEl         = document.getElementById('player-video');
+    const playBtn         = document.getElementById('player-play');
+    const playIcon        = document.getElementById('player-play-icon');
+    const centerBtn       = document.getElementById('player-center-btn');
+    const centerIcon      = document.getElementById('player-center-icon');
+    const muteBtn         = document.getElementById('player-mute');
+    const muteIcon        = document.getElementById('player-mute-icon');
+    const scrubber        = document.getElementById('player-scrubber');
+    const scrubberFill    = document.getElementById('player-scrubber-fill');
+    const scrubberHandle  = document.getElementById('player-scrubber-handle');
+    const timeElapsedEl   = document.getElementById('player-time-elapsed');
+    const timeDurationEl  = document.getElementById('player-time-duration');
+
+    let hideTimer = null;
+
+    function formatTime(s) {
+        if (!isFinite(s) || s < 0) return '0:00';
+        const m = Math.floor(s / 60);
+        const sec = Math.floor(s % 60).toString().padStart(2, '0');
+        return `${m}:${sec}`;
+    }
+
+    function showControls() {
+        player.classList.add('show-controls');
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => {
+            if (!videoEl.paused) player.classList.remove('show-controls');
+        }, 2600);
+    }
+
+    player.addEventListener('mousemove', showControls);
+    player.addEventListener('mouseleave', () => {
+        if (!videoEl.paused) player.classList.remove('show-controls');
+    });
+
+    function togglePlay() {
+        if (videoEl.paused) videoEl.play(); else videoEl.pause();
+    }
+    videoEl.addEventListener('click', togglePlay);
+    playBtn.addEventListener('click', togglePlay);
+    centerBtn.addEventListener('click', togglePlay);
+
+    videoEl.addEventListener('play', () => {
+        player.classList.remove('is-paused');
+        playIcon.innerHTML = PAUSE_ICON;
+        centerIcon.innerHTML = PAUSE_ICON;
+        showControls();
+    });
+    videoEl.addEventListener('pause', () => {
+        player.classList.add('is-paused');
+        playIcon.innerHTML = PLAY_ICON;
+        centerIcon.innerHTML = PLAY_ICON;
+        clearTimeout(hideTimer);
+    });
+
+    videoEl.addEventListener('timeupdate', () => {
+        const pct = (videoEl.currentTime / videoEl.duration) * 100 || 0;
+        scrubberFill.style.width = pct + '%';
+        scrubberHandle.style.left = pct + '%';
+        timeElapsedEl.textContent = formatTime(videoEl.currentTime);
+    });
+    videoEl.addEventListener('loadedmetadata', () => {
+        timeDurationEl.textContent = formatTime(videoEl.duration);
+    });
+
+    function seek(e) {
+        const rect = scrubber.getBoundingClientRect();
+        const pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+        if (isFinite(videoEl.duration)) videoEl.currentTime = pct * videoEl.duration;
+    }
+    scrubber.addEventListener('click', seek);
+
+    muteBtn.addEventListener('click', () => {
+        videoEl.muted = !videoEl.muted;
+        muteIcon.innerHTML = videoEl.muted ? MUTE_ICON_OFF : MUTE_ICON_ON;
+    });
+
+    function openModal(p) {
+        stopMedia();
+
+        modalTitle.textContent = p.title;
+        videoEl.src = p.src;
+        videoEl.muted = false;
+        muteIcon.innerHTML = MUTE_ICON_ON;
+        scrubberFill.style.width = '0%';
+        scrubberHandle.style.left = '0%';
+        timeElapsedEl.textContent = '0:00';
+
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        videoEl.play();
+    }
+
+    function stopMedia() {
+        videoEl.pause();
+        videoEl.removeAttribute('src');
+        videoEl.load();
+    }
+
+    function closeModal() {
+        stopMedia();
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+    document.addEventListener('keydown', e => {
+        if (!modal.classList.contains('open')) return;
+        if (e.key === 'Escape') closeModal();
+    });
+
+    const hash = window.location.hash.slice(1);
+    applyFilter((hash && categoryLabels[hash]) ? hash : 'bryllup');
+    </script>
+</body>
+</html>

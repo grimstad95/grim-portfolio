@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone — GRIM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-drone">
+
+    <div class="drone-header">
+        <h1>Drone</h1>
+        <p>Beskrivelse av drone-arbeid kommer her. Skriv litt om hva slags oppdrag du tar, utstyr du bruker og hva droneopptak tilfører en produksjon.</p>
+    </div>
+
+    <div class="drone-grid-wrap">
+        <div class="drone-grid" id="grid"></div>
+    </div>
+
+    <footer>
+        <span class="footer-logo">GRIM</span>
+        <span class="footer-copy">© 2026 Bjørnar Grimstad</span>
+    </footer>
+
+    <script src="nav.js"></script>
+    <script>
+        const projects = [
+            { title: 'Drone — placeholder 1', tags: ['Drone', 'Regi'] },
+            { title: 'Drone — placeholder 2', tags: ['Drone', 'Klipp'] },
+            { title: 'Drone — placeholder 3', tags: ['Drone', 'Foto'] },
+        ];
+
+        const grid = document.getElementById('grid');
+        projects.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-thumb"></div>
+                <div class="card-info">
+                    <div class="card-title">${p.title}</div>
+                    <div class="card-tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    </script>
+</body>
+</html>
