@@ -144,6 +144,13 @@
             cursor: pointer;
         }
 
+        /* YouTube-spiller (samme flate som lokal video) — egne kontroller
+           i UI-en styrer YT IFrame API i stedet for <video>-elementet.
+           #yt-player selv blir byttet ut med et <iframe> av YouTube sitt
+           API, derfor styres synlighet på #yt-player-wrap (stabil, byttes
+           aldri ut) — se JS-kommentar om samme fallgruve som ikon-bugen. */
+        #yt-player, #yt-player iframe { width: 100%; height: 100%; display: block; pointer-events: none; }
+
         /* Tilbake + tittel — alltid synlig, svevende, ingen boks */
         .player-back {
             position: absolute;
@@ -310,6 +317,9 @@
             <div class="modal-body" id="modal-body">
                 <div class="player" id="player">
                     <video id="player-video" class="modal-local-video" playsinline preload="metadata"></video>
+                    <div id="yt-player-wrap" class="modal-local-video" style="display:none;">
+                        <div id="yt-player"></div>
+                    </div>
 
                     <button class="player-back" id="modal-close" aria-label="Tilbake">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
@@ -401,7 +411,7 @@
           desc: 'Reklamefilm for bruk i sosiale medier av Skogstad sin nye kolleksjon.', services: ['regi', 'foto'] },
 
         // ─── YouTube
-        { title: 'Helt Kake', category: 'youtube', orientation: 'landscape', file: 'Youtube/Helt Kake_Youtube.mp4', thumb: 'Helt kake.jpg',
+        { title: 'Helt Kake', category: 'youtube', orientation: 'landscape', file: 'Youtube/Helt Kake_Youtube.mp4', thumb: 'Helt kake.jpg', youtubeId: '9aKC4lRjen0',
           desc: 'Var med på å starte egen Youtube kanal i forbindelse med jobb, hvor målet var å treffe yngre personer på Youtube.', services: ['regi', 'klipp', 'manus'] },
         { title: 'Hjernefrys', category: 'youtube', orientation: 'landscape', file: 'Youtube/Hjernefrys_Yotuube.mp4', thumb: 'Hjernefrys.jpg',
           desc: 'Vi startet en snapchat serie som het Hjernefrys hvor Oliver Bergset inviterte gjester til et isbad samtidig som de skulle intervjues.', services: ['regi', 'klipp'] },
@@ -500,29 +510,102 @@
         player.classList.add('show-controls');
         clearTimeout(hideTimer);
         hideTimer = setTimeout(() => {
-            if (!videoEl.paused) player.classList.remove('show-controls');
+            if (!isPaused()) player.classList.remove('show-controls');
         }, 2600);
     }
 
     player.addEventListener('mousemove', showControls);
     player.addEventListener('mouseleave', () => {
-        if (!videoEl.paused) player.classList.remove('show-controls');
+        if (!isPaused()) player.classList.remove('show-controls');
     });
 
-    function togglePlay() {
-        if (videoEl.paused) videoEl.play(); else videoEl.pause();
+    // ─── Dobbel spillerkilde: lokal <video> eller YouTube (samme UI) ──
+    // currentMode: 'native' (fil fra Videoer/) eller 'youtube' (YT IFrame API)
+    let currentMode  = 'native';
+    let ytPlayer     = null;
+    let ytApiReady   = false;
+    let pendingYtId  = null;
+    let ytProgressTimer = null;
+    const ytWrap = document.getElementById('yt-player-wrap');
+
+    const ytTag = document.createElement('script');
+    ytTag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(ytTag);
+    window.onYouTubeIframeAPIReady = () => {
+        ytApiReady = true;
+        if (pendingYtId) { const id = pendingYtId; pendingYtId = null; startYoutube(id); }
+    };
+
+    function isPaused() {
+        return currentMode === 'youtube'
+            ? !ytPlayer || ytPlayer.getPlayerState() !== 1
+            : videoEl.paused;
     }
+
+    function startYoutube(videoId) {
+        if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
+            ytPlayer.loadVideoById(videoId);
+            return;
+        }
+        ytPlayer = new YT.Player('yt-player', {
+            width: '100%', height: '100%', videoId: videoId,
+            playerVars: { autoplay: 1, controls: 0, modestbranding: 1, rel: 0, playsinline: 1, fs: 0, disablekb: 1, iv_load_policy: 3 },
+            events: {
+                onReady: e => { e.target.unMute(); e.target.playVideo(); },
+                onStateChange: onYtStateChange,
+            },
+        });
+    }
+
+    function onYtStateChange(e) {
+        if (e.data === 1) { // playing
+            player.classList.remove('is-paused');
+            playIcon.innerHTML = PAUSE_ICON;
+            centerIcon.innerHTML = PAUSE_ICON;
+            showControls();
+            timeDurationEl.textContent = formatTime(ytPlayer.getDuration());
+            clearInterval(ytProgressTimer);
+            ytProgressTimer = setInterval(updateYtProgress, 250);
+        } else {
+            player.classList.add('is-paused');
+            playIcon.innerHTML = PLAY_ICON;
+            centerIcon.innerHTML = PLAY_ICON;
+            clearTimeout(hideTimer);
+            clearInterval(ytProgressTimer);
+        }
+    }
+
+    function updateYtProgress() {
+        if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
+        const cur = ytPlayer.getCurrentTime(), dur = ytPlayer.getDuration();
+        const pct = (cur / dur) * 100 || 0;
+        scrubberFill.style.width = pct + '%';
+        scrubberHandle.style.left = pct + '%';
+        timeElapsedEl.textContent = formatTime(cur);
+    }
+
+    function togglePlay() {
+        if (currentMode === 'youtube') {
+            if (!ytPlayer) return;
+            if (ytPlayer.getPlayerState() === 1) ytPlayer.pauseVideo(); else ytPlayer.playVideo();
+        } else {
+            if (videoEl.paused) videoEl.play(); else videoEl.pause();
+        }
+    }
+    ytWrap.addEventListener('click', togglePlay);
     videoEl.addEventListener('click', togglePlay);
     playBtn.addEventListener('click', togglePlay);
     centerBtn.addEventListener('click', togglePlay);
 
     videoEl.addEventListener('play', () => {
+        if (currentMode !== 'native') return;
         player.classList.remove('is-paused');
         playIcon.innerHTML = PAUSE_ICON;
         centerIcon.innerHTML = PAUSE_ICON;
         showControls();
     });
     videoEl.addEventListener('pause', () => {
+        if (currentMode !== 'native') return;
         player.classList.add('is-paused');
         playIcon.innerHTML = PLAY_ICON;
         centerIcon.innerHTML = PLAY_ICON;
@@ -530,44 +613,70 @@
     });
 
     videoEl.addEventListener('timeupdate', () => {
+        if (currentMode !== 'native') return;
         const pct = (videoEl.currentTime / videoEl.duration) * 100 || 0;
         scrubberFill.style.width = pct + '%';
         scrubberHandle.style.left = pct + '%';
         timeElapsedEl.textContent = formatTime(videoEl.currentTime);
     });
     videoEl.addEventListener('loadedmetadata', () => {
+        if (currentMode !== 'native') return;
         timeDurationEl.textContent = formatTime(videoEl.duration);
     });
 
     function seek(e) {
         const rect = scrubber.getBoundingClientRect();
         const pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
-        if (isFinite(videoEl.duration)) videoEl.currentTime = pct * videoEl.duration;
+        if (currentMode === 'youtube') {
+            if (ytPlayer && typeof ytPlayer.getDuration === 'function') ytPlayer.seekTo(pct * ytPlayer.getDuration(), true);
+        } else if (isFinite(videoEl.duration)) {
+            videoEl.currentTime = pct * videoEl.duration;
+        }
     }
     scrubber.addEventListener('click', seek);
 
     muteBtn.addEventListener('click', () => {
-        videoEl.muted = !videoEl.muted;
-        muteIcon.innerHTML = videoEl.muted ? MUTE_ICON_OFF : MUTE_ICON_ON;
+        if (currentMode === 'youtube') {
+            if (!ytPlayer) return;
+            if (ytPlayer.isMuted()) ytPlayer.unMute(); else ytPlayer.mute();
+            muteIcon.innerHTML = ytPlayer.isMuted() ? MUTE_ICON_OFF : MUTE_ICON_ON;
+        } else {
+            videoEl.muted = !videoEl.muted;
+            muteIcon.innerHTML = videoEl.muted ? MUTE_ICON_OFF : MUTE_ICON_ON;
+        }
     });
 
     function openModal(p) {
         stopMedia();
 
         modalTitle.textContent = p.title;
-        videoEl.src = p.src;
-        videoEl.muted = false;
         muteIcon.innerHTML = MUTE_ICON_ON;
         scrubberFill.style.width = '0%';
         scrubberHandle.style.left = '0%';
         timeElapsedEl.textContent = '0:00';
+        timeDurationEl.textContent = '0:00';
+
+        if (p.youtubeId) {
+            currentMode = 'youtube';
+            videoEl.style.display = 'none';
+            ytWrap.style.display = 'block';
+            if (ytApiReady) startYoutube(p.youtubeId); else pendingYtId = p.youtubeId;
+        } else {
+            currentMode = 'native';
+            ytWrap.style.display = 'none';
+            videoEl.style.display = 'block';
+            videoEl.src = p.src;
+            videoEl.muted = false;
+            videoEl.play();
+        }
 
         modal.classList.add('open');
         document.body.style.overflow = 'hidden';
-        videoEl.play();
     }
 
     function stopMedia() {
+        if (ytPlayer && typeof ytPlayer.stopVideo === 'function') ytPlayer.stopVideo();
+        clearInterval(ytProgressTimer);
         videoEl.pause();
         videoEl.removeAttribute('src');
         videoEl.load();
