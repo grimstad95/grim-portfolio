@@ -4,7 +4,7 @@
     const nav = document.createElement('nav');
     nav.id = 'nav';
     nav.innerHTML = `
-        <a href="index.html" class="logo"><img src="logos/GRIM_9J_white.svg" alt="GRIM" class="logo-img"></a>
+        <a href="/" class="logo"><img src="logos/GRIM_9J_white.svg" alt="GRIM" class="logo-img"></a>
         <ul class="nav-links">
             <li><a href="video.html" class="${page === 'video.html' ? 'active' : ''}">Video</a></li>
             <li><a href="foto.html" class="${page === 'foto.html' ? 'active' : ''}">Foto</a></li>
