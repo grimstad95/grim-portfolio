@@ -1,16 +1,18 @@
 (function () {
-    const page = window.location.pathname.split('/').pop() || 'index.html';
+    // Rene URL-er (uten .html) — matcher både /video og /video.html
+    // slik at "aktiv"-merkingen fungerer uansett hvilken form som er i adressefeltet.
+    const page = (window.location.pathname.split('/').pop() || '').replace(/\.html$/, '') || 'index';
 
     const nav = document.createElement('nav');
     nav.id = 'nav';
     nav.innerHTML = `
         <a href="/" class="logo"><img src="logos/GRIM_9J_white.svg" alt="GRIM" class="logo-img"></a>
         <ul class="nav-links">
-            <li><a href="video.html" class="${page === 'video.html' ? 'active' : ''}">Video</a></li>
-            <li><a href="foto.html" class="${page === 'foto.html' ? 'active' : ''}">Foto</a></li>
-            <li><a href="prosjekt.html" class="${page === 'prosjekt.html' ? 'active' : ''}">Prosjekt</a></li>
-            <li><a href="podcast.html" class="${page === 'podcast.html' ? 'active' : ''}">Podcast</a></li>
-            <li><a href="kontakt.html" class="${page === 'kontakt.html' ? 'active' : ''}">Kontakt</a></li>
+            <li><a href="/video" class="${page === 'video' ? 'active' : ''}">Video</a></li>
+            <li><a href="/foto" class="${page === 'foto' ? 'active' : ''}">Foto</a></li>
+            <li><a href="/prosjekt" class="${page === 'prosjekt' ? 'active' : ''}">Prosjekt</a></li>
+            <li><a href="/podcast" class="${page === 'podcast' ? 'active' : ''}">Podcast</a></li>
+            <li><a href="/kontakt" class="${page === 'kontakt' ? 'active' : ''}">Kontakt</a></li>
         </ul>
     `;
 

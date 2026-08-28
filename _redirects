@@ -1,2 +1,19 @@
-# Vis aldri index.html i adressefeltet — send alltid videre til roten
-/index.html   /   301!
+# Rene URL-er uten .html i adressefeltet.
+# Første blokk: hvis noen havner på xxx.html (gammel lenke, bokmerke),
+# send dem videre til den rene adressen. "!" tvinger regelen til å
+# overstyre selve filen, som ellers ville blitt vist i stedet.
+/index.html      /            301!
+/video.html      /video       301!
+/foto.html       /foto        301!
+/prosjekt.html   /prosjekt    301!
+/podcast.html    /podcast     301!
+/kontakt.html    /kontakt     301!
+
+# Andre blokk: server riktig fil bak den rene adressen (uten å endre
+# det som vises i adressefeltet — "200" betyr "vis dette innholdet
+# her", ikke en viderekobling).
+/video      /video.html      200
+/foto       /foto.html       200
+/prosjekt   /prosjekt.html   200
+/podcast    /podcast.html    200
+/kontakt    /kontakt.html    200
