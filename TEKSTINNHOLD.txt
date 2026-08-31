@@ -335,7 +335,7 @@ etter ønske.
 
 --- Intro øverst ---
 [Overskrift]  ► Podcast
-[Brødtekst]   ► Noen podcast prosjekter jeg har produsert.
+[Brødtekst]   ► Noen podcaster jeg har vært med å skape.
 
 --- Podcaster (alle vises på rad, ingen kategorifaner) ---
   Ikke snakk om det
