@@ -174,24 +174,32 @@
 </head>
 <body class="page-home">
 
-    <!-- Fullscreen showreel -->
+    <a class="skip-link" href="#innhold">Hopp til innhold</a>
+
+    <!-- Fullscreen showreel — lett 720p-loop (2 MB) uten lyd. Starter bare på
+         større skjermer, uten "spar data" og uten redusert bevegelse; ellers
+         vises kun stillbildet. Dette holder trafikken (og Netlify-kvoten) lav. -->
     <div class="hero-video" id="hero-video">
-        <video autoplay muted loop playsinline>
-            <source src="Videoer/Showreel_01.mp4" type="video/mp4">
+        <video id="hero-loop" muted loop playsinline preload="none" poster="Videoer/Showreel_poster.jpg" aria-hidden="true">
+            <source src="Videoer/Showreel_hero.mp4" type="video/mp4">
         </video>
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <h1>Kreative filmer<br><em>for alle formater.</em></h1>
             <p class="hero-sub">Video &nbsp;·&nbsp; Foto &nbsp;·&nbsp; Design &nbsp;·&nbsp; AI &nbsp;·&nbsp; Sosiale medier</p>
         </div>
+        <button class="hero-toggle" id="hero-toggle" type="button" aria-label="Pause bakgrunnsvideo" hidden>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path id="hero-toggle-icon" d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+        </button>
     </div>
 
-    <!-- Spiller — åpner showreelen stort, med lyd -->
-    <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <!-- Spiller — utvalgte prosjekter spilles fra YouTube (ingen trafikk mot Netlify) -->
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Videospiller" aria-hidden="true">
         <div class="modal-inner">
             <div class="modal-body">
                 <div class="player" id="player">
-                    <video id="player-video" class="modal-local-video" playsinline preload="metadata" src="Videoer/Showreel_01.mp4"></video>
+                    <iframe id="player-yt" class="modal-local-video" title="Videospiller" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen hidden></iframe>
+                    <video id="player-video" class="modal-local-video" playsinline preload="none"></video>
 
                     <button class="player-back" id="modal-close" aria-label="Lukk">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
@@ -227,10 +235,10 @@
     </div>
 
     <!-- Utvalgt -->
-    <section class="featured-section">
+    <section class="featured-section" id="innhold" tabindex="-1">
         <h2 class="featured-label">Utvalgte prosjekter</h2>
         <div class="featured-grid">
-            <div class="featured-card" role="button" tabindex="0" data-video="Videoer/Bryllup/Charlotte&amp;Jacob.mp4" data-title="Charlotte &amp; Jacob">
+            <div class="featured-card" role="button" tabindex="0" data-youtube="GkXd8wbuyIM" data-title="Charlotte &amp; Jacob" aria-label="Spill av: Charlotte &amp; Jacob">
                 <div class="featured-thumb">
                     <img src="Videoer/Thumbnails_Nettside/Charlotte_Jacob.jpg" alt="Charlotte &amp; Jacob">
                     <div class="featured-thumb-overlay">
@@ -240,7 +248,7 @@
                     </div>
                 </div>
             </div>
-            <div class="featured-card" role="button" tabindex="0" data-video="Videoer/Næringsliv/Kongsberg_01.mp4" data-title="Kongsberg Digital × Norske Shell">
+            <div class="featured-card" role="button" tabindex="0" data-youtube="DJ9floQ5HJU" data-title="Kongsberg Digital × Norske Shell" aria-label="Spill av: Kongsberg Digital × Norske Shell">
                 <div class="featured-thumb">
                     <img src="Videoer/Thumbnails_Nettside/Kongsberg_02.jpg" alt="Kongsberg Digital × Norske Shell">
                     <div class="featured-thumb-overlay">
@@ -250,7 +258,7 @@
                     </div>
                 </div>
             </div>
-            <div class="featured-card" role="button" tabindex="0" data-video="Videoer/Reklame/Den Stolte Hane_Dennis Hauger_Reklame.mp4" data-title="Den Stolte Hane × Dennis Hauger">
+            <div class="featured-card" role="button" tabindex="0" data-youtube="cO2cRLgCJaU" data-title="Den Stolte Hane × Dennis Hauger" aria-label="Spill av: Den Stolte Hane × Dennis Hauger">
                 <div class="featured-thumb">
                     <img src="Videoer/Thumbnails_Nettside/Snack%20King%20Reklame.jpg" alt="Den Stolte Hane × Dennis Hauger">
                     <div class="featured-thumb-overlay">
@@ -413,41 +421,91 @@
     });
 
     const playerTitle = document.getElementById('player-title');
+    const ytFrame     = document.getElementById('player-yt');
+    const closeBtn    = document.getElementById('modal-close');
+    let lastFocus = null;
 
-    function openPlayer(src, title) {
-        videoEl.src = src || 'Videoer/Showreel_01.mp4';
-        playerTitle.textContent = title || 'Showreel';
-        videoEl.currentTime = 0;
-        videoEl.muted = false;
-        muteIcon.innerHTML = MUTE_ICON_ON;
+    // Utvalgte prosjekter spilles fra YouTube (youtube-nocookie): null
+    // båndbredde mot Netlify, og ingen sporings-cookies før avspilling.
+    function openPlayer(youtubeId, title) {
+        lastFocus = document.activeElement;
+        playerTitle.textContent = title || '';
+        videoEl.hidden = true;
+        player.classList.add('is-youtube');
+        ytFrame.hidden = false;
+        ytFrame.title = title ? `Video: ${title}` : 'Videospiller';
+        ytFrame.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(youtubeId)}?autoplay=1&rel=0&modestbranding=1`;
         modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
-        videoEl.play();
+        // spilleren toner inn (visibility-overgang) — flytt fokus når den er synlig
+        setTimeout(() => closeBtn.focus(), 60);
     }
 
     function closePlayer() {
+        ytFrame.src = 'about:blank'; // stopper avspillingen helt
+        ytFrame.hidden = true;
         videoEl.pause();
         modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+        if (lastFocus) lastFocus.focus();
     }
 
-    document.getElementById('modal-close').addEventListener('click', closePlayer);
+    closeBtn.addEventListener('click', closePlayer);
     modal.addEventListener('click', e => { if (e.target === modal) closePlayer(); });
     document.addEventListener('keydown', e => {
-        if (modal.classList.contains('open') && e.key === 'Escape') closePlayer();
+        if (!modal.classList.contains('open')) return;
+        if (e.key === 'Escape') closePlayer();
+        // hold tastaturfokus inne i spilleren mens den er åpen
+        if (e.key === 'Tab') {
+            const f = [...modal.querySelectorAll('button:not([hidden]), iframe:not([hidden])')];
+            const first = f[0], last = f[f.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
     });
 
-    // Utvalgt-kortene spiller filmen sin direkte her på forsiden,
-    // i stedet for å lenke videre til Video-siden.
     document.querySelectorAll('.featured-card').forEach(card => {
-        card.addEventListener('click', () => openPlayer(card.dataset.video, card.dataset.title));
+        card.addEventListener('click', () => openPlayer(card.dataset.youtube, card.dataset.title));
         card.addEventListener('keydown', e => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                openPlayer(card.dataset.video, card.dataset.title);
+                openPlayer(card.dataset.youtube, card.dataset.title);
             }
         });
     });
+    </script>
+
+    <script>
+    // ─── Bakgrunnsvideo: spares der den ikke trengs. Starter bare når
+    // skjermen er stor nok, brukeren ikke har "spar data" og ikke har bedt
+    // om redusert bevegelse. Ellers står stillbildet. Pauseknapp (WCAG 2.2.2).
+    (function () {
+        const hero   = document.getElementById('hero-loop');
+        const toggle = document.getElementById('hero-toggle');
+        const icon   = document.getElementById('hero-toggle-icon');
+        const PAUSE  = 'M7 5h4v14H7zM13 5h4v14h-4z';
+        const PLAY   = 'M8 5v14l11-7z';
+        const conn   = navigator.connection || {};
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const small  = window.matchMedia('(max-width: 768px)').matches;
+        if (reduce || small || conn.saveData || /(^|-)2g$/.test(conn.effectiveType || '')) return;
+
+        hero.preload = 'auto';
+        hero.play().then(() => { toggle.hidden = false; }).catch(() => {});
+        toggle.addEventListener('click', () => {
+            if (hero.paused) {
+                hero.play();
+                icon.setAttribute('d', PAUSE);
+                toggle.setAttribute('aria-label', 'Pause bakgrunnsvideo');
+            } else {
+                hero.pause();
+                icon.setAttribute('d', PLAY);
+                toggle.setAttribute('aria-label', 'Spill av bakgrunnsvideo');
+            }
+        });
+    })();
     </script>
 </body>
 </html>

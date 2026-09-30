@@ -5,7 +5,10 @@
 Videoer/*
 !Videoer/Thumbnails_Nettside/
 !Videoer/Podcast_Thumbnail/
-!Videoer/Showreel_01.mp4
+# Lett 720p-loop (2 MB) + stillbilde til forsiden. Original-showreelen (27 MB)
+# publiseres ikke lenger — den kostet unødvendig mye trafikk på Netlify.
+!Videoer/Showreel_hero.mp4
+!Videoer/Showreel_poster.jpg
 !Videoer/Prosjekter/
 Videoer/Prosjekter/*
 !Videoer/Prosjekter/Tiktok/
@@ -15,3 +18,4 @@ Foto/*
 
 # Systemfiler
 .DS_Store
+.claude/

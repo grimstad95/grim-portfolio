@@ -38,16 +38,16 @@
 
                 <!-- Category chips -->
                 <div class="form-group">
-                    <label class="form-label">Hva gjelder forespørselen?</label>
-                    <div class="category-chips" id="category-chips">
-                        <button type="button" class="chip" data-value="Video: Event">Event</button>
-                        <button type="button" class="chip" data-value="Video: Reklame">Reklame</button>
-                        <button type="button" class="chip" data-value="Video: Sosiale medier">Sosiale medier</button>
-                        <button type="button" class="chip" data-value="Video: YouTube">YouTube</button>
-                        <button type="button" class="chip" data-value="Foto: Bryllup">Bryllup</button>
-                        <button type="button" class="chip" data-value="Drone">Drone</button>
-                        <button type="button" class="chip" data-value="Video: AI">AI</button>
-                        <button type="button" class="chip" data-value="Design">Design</button>
+                    <span class="form-label" id="category-label">Hva gjelder forespørselen?</span>
+                    <div class="category-chips" id="category-chips" role="group" aria-labelledby="category-label">
+                        <button type="button" class="chip" aria-pressed="false" data-value="Video: Event">Event</button>
+                        <button type="button" class="chip" aria-pressed="false" data-value="Video: Reklame">Reklame</button>
+                        <button type="button" class="chip" aria-pressed="false" data-value="Video: Sosiale medier">Sosiale medier</button>
+                        <button type="button" class="chip" aria-pressed="false" data-value="Video: YouTube">YouTube</button>
+                        <button type="button" class="chip" aria-pressed="false" data-value="Foto: Bryllup">Bryllup</button>
+                        <button type="button" class="chip" aria-pressed="false" data-value="Drone">Drone</button>
+                        <button type="button" class="chip" aria-pressed="false" data-value="Video: AI">AI</button>
+                        <button type="button" class="chip" aria-pressed="false" data-value="Design">Design</button>
                     </div>
                     <!-- Hidden input carries selected value -->
                     <input type="hidden" name="category" id="category-input">
@@ -75,12 +75,19 @@
                 </div>
 
                 <!-- Honeypot mot spam-roboter — usynlig for ekte besøkende -->
-                <input type="checkbox" name="botcheck" id="botcheck" style="display:none" tabindex="-1" autocomplete="off">
+                <input type="checkbox" name="botcheck" id="botcheck" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
 
-                <button type="submit" class="form-submit" id="form-submit-btn">Ta kontakt</button>
+                <p class="form-privacy" id="form-privacy">
+                    Personvern: Navn, e-post, bedrift og melding sendes til meg via tjenesten Web3Forms
+                    og brukes kun til å svare på henvendelsen din. Opplysningene deles ikke med andre og
+                    slettes når de ikke lenger trengs. Du kan når som helst be om innsyn eller sletting på
+                    <a href="mailto:grimstad1995@hotmail.com">grimstad1995@hotmail.com</a>.
+                </p>
 
-                <p class="form-success" id="form-success">Takk! Jeg tar kontakt snart.</p>
-                <p class="form-error" id="form-error">Noe gikk galt, prøv gjerne igjen — eller send meg en e-post direkte på <a href="mailto:grimstad1995@hotmail.com">grimstad1995@hotmail.com</a>.</p>
+                <button type="submit" class="form-submit" id="form-submit-btn" aria-describedby="form-privacy">Ta kontakt</button>
+
+                <p class="form-success" id="form-success" role="status" aria-live="polite">Takk! Jeg tar kontakt snart.</p>
+                <p class="form-error" id="form-error" role="alert">Noe gikk galt, prøv gjerne igjen — eller send meg en e-post direkte på <a href="mailto:grimstad1995@hotmail.com">grimstad1995@hotmail.com</a>.</p>
             </form>
         </div>
 
@@ -105,10 +112,11 @@
         const chip = e.target.closest('.chip');
         if (!chip) return;
         const wasActive = chip.classList.contains('active');
-        // Deselect all, then toggle clicked
-        chips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        // Deselect all, then toggle clicked (aria-pressed så skjermlesere hører hva som er valgt)
+        chips.querySelectorAll('.chip').forEach(c => { c.classList.remove('active'); c.setAttribute('aria-pressed', 'false'); });
         if (!wasActive) {
             chip.classList.add('active');
+            chip.setAttribute('aria-pressed', 'true');
             categoryInput.value = chip.dataset.value;
         } else {
             categoryInput.value = '';
@@ -163,7 +171,7 @@
             if (data.success) {
                 successMsg.style.display = 'block';
                 form.reset();
-                chips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                chips.querySelectorAll('.chip').forEach(c => { c.classList.remove('active'); c.setAttribute('aria-pressed', 'false'); });
                 categoryInput.value = '';
             } else {
                 errorMsg.style.display = 'block';

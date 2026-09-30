@@ -7,7 +7,7 @@
     --bg-elevated-2:#16221f;
     --ink:          #f2f7f6;
     --ink-dim:      #9fb3b0;
-    --ink-faint:    #6d7d7a;
+    --ink-faint:    #8a9b97; /* ≥ 4.5:1 mot bakgrunnen (WCAG AA for liten tekst) */
     --line:         rgba(242,247,246,0.12);
     --line-strong:  rgba(242,247,246,0.22);
     --accent:       #ff6b35;
@@ -949,6 +949,71 @@ footer {
 .footer-logo { font-family: var(--display); font-size: 14px; letter-spacing: 0.06em; color: var(--ink); }
 .footer-copy  { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
 
+/* ─── Tilgjengelighet ────────────────────────────────── */
+/* Synlig fokus for tastaturbrukere (ikke ved museklikk) */
+:focus-visible {
+    outline: 2px solid var(--accent-2);
+    outline-offset: 3px;
+}
+.form-input:focus-visible { outline: none; } /* har egen understrek-markering */
+
+/* "Hopp til innhold" — usynlig til den får tastaturfokus */
+.skip-link {
+    position: absolute;
+    left: 16px; top: -60px;
+    z-index: 1000;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 10px 16px;
+    text-decoration: none;
+    transition: top 0.2s;
+}
+.skip-link:focus { top: 16px; }
+
+/* Pause/spill-knapp for bakgrunnsvideoen på forsiden */
+.hero-toggle {
+    position: absolute;
+    right: 52px; bottom: 88px;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(10,22,20,0.55);
+    border: 1px solid var(--line-strong);
+    color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 3;
+}
+.hero-toggle[hidden] { display: none; }
+.hero-toggle svg { width: 16px; height: 16px; }
+.hero-toggle:hover { border-color: var(--accent-2); }
+
+/* YouTube-avspilling i spilleren: egne kontroller trengs ikke */
+.player.is-youtube .player-controls-wrap,
+.player.is-youtube .player-center-btn { display: none; }
+.player iframe { border: 0; }
+
+/* Personvern-tekst under kontaktskjemaet */
+.form-privacy {
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--ink-faint);
+    max-width: 60ch;
+}
+.form-privacy a { color: var(--ink-dim); text-decoration: underline; text-underline-offset: 2px; }
+
+/* Respekter "reduser bevegelse" i operativsystemet */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    .marquee-track { animation: none; flex-wrap: wrap; width: auto; justify-content: center; }
+}
+
 /* ─── Responsive ─────────────────────────────────────── */
 @media (max-width: 1100px) {
     .modal-body { grid-template-columns: 1fr; }
@@ -996,6 +1061,7 @@ footer {
     }
 
     .hero-content { left: 24px; right: 24px; bottom: 60px; }
+    .hero-toggle { right: 24px; bottom: 60px; }
 
     .gallery-tabs { padding: 20px 24px 0; }
     .gallery-main { padding: 24px; }
