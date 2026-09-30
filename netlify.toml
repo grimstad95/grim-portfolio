@@ -1,0 +1,25 @@
+# Fartsgrense per besøkende (IP) på de tyngste filene, så ingen kan tømme
+# Netlify-kvoten ved å laste dem ned i løkke. Gratisplanen tillater 2 regler.
+# En vanlig besøkende laster hver fil 1-3 ganger (videoer hentes i biter),
+# så 20 forespørsler i minuttet merkes ikke. Over grensen: 429 i 60 sekunder.
+# (URL-omskrivingene for rene adresser ligger fortsatt i _redirects.)
+
+[[redirects]]
+  from = "/Videoer/Showreel_hero.mp4"
+  to = "/Videoer/Showreel_hero.mp4"
+  status = 200
+  force = true
+  [redirects.rate_limit]
+    window_limit = 20
+    window_size = 60
+    aggregate_by = ["ip", "domain"]
+
+[[redirects]]
+  from = "/Videoer/Prosjekter/*"
+  to = "/Videoer/Prosjekter/:splat"
+  status = 200
+  force = true
+  [redirects.rate_limit]
+    window_limit = 20
+    window_size = 60
+    aggregate_by = ["ip", "domain"]

@@ -19,3 +19,14 @@ Foto/*
 # Systemfiler
 .DS_Store
 .claude/
+
+# Arbeidsfiler som ikke brukes av nettsiden — skal ikke publiseres
+# (de var offentlig tilgjengelige og kunne brukes til å tømme Netlify-kvoten;
+# CV-bildet skal heller ikke ligge åpent). Filene ligger fortsatt lokalt.
+Phoenix_forestilling.png
+Tiktok_0*.png
+Bjørnar_Grimstad_CV.pdf.jpg
+grim-preview.html
+skrift-farge-utforsking.html
+TEKSTINNHOLD.txt
+.claude/
